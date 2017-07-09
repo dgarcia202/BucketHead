@@ -5,6 +5,8 @@ public class PlayerScript : MonoBehaviour {
 
 	public float speed = 2f;
 
+	public float jumpForce = 10f;
+
 	private Rigidbody2D rigidBody;
 
 	private Animator animator;
@@ -17,20 +19,20 @@ public class PlayerScript : MonoBehaviour {
 	}
 
 	public void Update () {
-		var horizontalInput = Input.GetAxisRaw ("Horizontal");
-		if (horizontalInput != 0f) {
-			// this.animator.SetInteger ("animState", 1);
-			this.animator.Play("PlayerWalk");
-		} else {
-			// this.animator.SetInteger ("animState", 0);
-			this.animator.Play("PlayerStill");
-		}		
 	}
 
 	public void FixedUpdate () {
 		var horizontalInput = Input.GetAxisRaw ("Horizontal");
+
+		ManageAnimations (horizontalInput);
 		ManageFacing (horizontalInput);
 		ManageSpeed (horizontalInput);
+
+		var velocity = this.rigidBody.velocity;
+		if (Input.GetButtonDown ("Jump") && velocity.y == 0) {
+			velocity.y = jumpForce;
+			this.rigidBody.velocity = velocity;
+		}
 	}
 
 	private void ManageSpeed (float horizontalInput)
@@ -38,6 +40,22 @@ public class PlayerScript : MonoBehaviour {
 		var velocity = this.rigidBody.velocity;
 		velocity.x = horizontalInput * speed;
 		this.rigidBody.velocity = velocity;
+	}
+
+	void ManageAnimations (float horizontalInput)
+	{
+		var currentAnimation = this.animator.GetCurrentAnimatorStateInfo (0);
+		/*
+		if (horizontalInput != 0f && !currentAnimation.IsName ("PlayerAttack")) {
+			this.animator.Play ("PlayerWalk");
+		}
+		else {
+			this.animator.Play ("PlayerStill");
+		}*/
+
+		if (Input.GetButtonDown ("Fire1")) {
+			this.animator.Play ("PlayerAttack");
+		}
 	}
 
 	private void ManageFacing (float horizontalInput)
