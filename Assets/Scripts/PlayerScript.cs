@@ -3,8 +3,14 @@ using System.Collections;
 
 public class PlayerScript : MonoBehaviour {
 
+	/// <summary>
+	/// The speed.
+	/// </summary>
 	public float speed = 2f;
 
+	/// <summary>
+	/// The jump force.
+	/// </summary>
 	public float jumpForce = 10f;
 
 	private Rigidbody2D rigidBody;
@@ -13,14 +19,26 @@ public class PlayerScript : MonoBehaviour {
 
 	private float previousAxis = 0;
 
+	private Transform groundDetect;
+
+	/// <summary>
+	/// Start this instance.
+	/// </summary>
 	public void Start () {
 		this.rigidBody = GetComponent<Rigidbody2D> ();
 		this.animator = GetComponent<Animator> ();
+		this.groundDetect = GameObject.Find (this.name + "/ground_detect").transform;
 	}
 
+	/// <summary>
+	/// Update this instance.
+	/// </summary>
 	public void Update () {
 	}
 
+	/// <summary>
+	/// Fixeds the update.
+	/// </summary>
 	public void FixedUpdate () {
 		var horizontalInput = Input.GetAxisRaw ("Horizontal");
 
@@ -32,6 +50,11 @@ public class PlayerScript : MonoBehaviour {
 		if (Input.GetButtonDown ("Jump") && velocity.y == 0) {
 			velocity.y = jumpForce;
 			this.rigidBody.velocity = velocity;
+			this.animator.SetBool ("isJumping", true);
+		}
+
+		if (!Physics2D.Linecast(this.transform.position, this.groundDetect.position)) {
+			this.animator.SetBool ("isJumping", false);
 		}
 	}
 
@@ -44,17 +67,16 @@ public class PlayerScript : MonoBehaviour {
 
 	void ManageAnimations (float horizontalInput)
 	{
-		var currentAnimation = this.animator.GetCurrentAnimatorStateInfo (0);
-		/*
-		if (horizontalInput != 0f && !currentAnimation.IsName ("PlayerAttack")) {
-			this.animator.Play ("PlayerWalk");
+		
+		if (horizontalInput != 0f) {
+			this.animator.SetBool ("isWalking", true);
 		}
 		else {
-			this.animator.Play ("PlayerStill");
-		}*/
+			this.animator.SetBool ("isWalking", false);
+		}
 
 		if (Input.GetButtonDown ("Fire1")) {
-			this.animator.Play ("PlayerAttack");
+			this.animator.SetBool ("isAttacking", true);
 		}
 	}
 
