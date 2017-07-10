@@ -13,6 +13,8 @@ public class PlayerScript : MonoBehaviour {
 	/// </summary>
 	public float jumpForce = 10f;
 
+	public bool isGrounded = false;
+
 	private Rigidbody2D rigidBody;
 
 	private Animator animator;
@@ -53,7 +55,8 @@ public class PlayerScript : MonoBehaviour {
 			this.animator.SetBool ("isJumping", true);
 		}
 
-		if (!Physics2D.Linecast(this.transform.position, this.groundDetect.position)) {
+		this.isGrounded = Physics2D.Linecast (this.transform.position, this.groundDetect.position);
+		if (!this.isGrounded) {
 			this.animator.SetBool ("isJumping", false);
 		}
 	}
