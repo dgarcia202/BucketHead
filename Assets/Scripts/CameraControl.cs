@@ -18,7 +18,8 @@ public class CameraControl : MonoBehaviour {
 
 		if (lastKnownPositionX != 0f) {
 			var cameraPosition = this.transform.position;
-			cameraPosition.x = (this.objectToFollow.transform.position.x - 5f);
+			//cameraPosition.x = (this.objectToFollow.transform.position.x - 5f);
+			this.transform.Translate(new Vector3(this.objectToFollow.transform.position.x - lastKnownPositionX, 0f, 0f));
 		}
 
 		lastKnownPositionX = currentPositionX;

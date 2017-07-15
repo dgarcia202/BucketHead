@@ -11,12 +11,12 @@ public class PlayerScript : MonoBehaviour {
 	/// <summary>
 	/// The jump force.
 	/// </summary>
-	public float jumpForce = 10f;
+	public float jumpForce = 15f;
 
 	/// <summary>
 	/// The jump boost.
 	/// </summary>
-	public float jumpBoost = 2.5f;
+	public float jumpBoost = 2f;
 
 	/// <summary>
 	/// The player mask.
@@ -52,26 +52,24 @@ public class PlayerScript : MonoBehaviour {
 	/// Fixeds the update.
 	/// </summary>
 	public void FixedUpdate () {
+		
 		var horizontalInput = Input.GetAxisRaw ("Horizontal");
 		this.isGrounded = Physics2D.Linecast (this.transform.position, this.groundDetect.position, this.playerMask);
 
-		ManageAnimations (horizontalInput);
-		ManageFacing (horizontalInput);
-		ManageSpeed (horizontalInput);
-
-		if (Input.GetButtonDown ("Jump") && this.isGrounded) {
-			this.rigidBody.velocity = new Vector2(this.rigidBody.velocity.x * this.jumpBoost, jumpForce);
-		}
+		Animations (horizontalInput);
+		Flip (horizontalInput);
+		Walking (horizontalInput);
+		Jump ();
 	}
 
-	private void ManageSpeed (float horizontalInput)
+	private void Walking (float horizontalInput)
 	{
 		var velocity = this.rigidBody.velocity;
 		velocity.x = horizontalInput * speed * (!this.isGrounded ? this.jumpBoost : 1);
 		this.rigidBody.velocity = velocity;
 	}
 
-	void ManageAnimations (float horizontalInput)
+	void Animations (float horizontalInput)
 	{
 		if (horizontalInput != 0f) {
 			this.animator.SetBool ("isWalking", true);
@@ -87,7 +85,13 @@ public class PlayerScript : MonoBehaviour {
 		this.animator.SetBool ("isJumping", !this.isGrounded);
 	}
 
-	private void ManageFacing (float horizontalInput)
+	void Jump()	{
+		if (Input.GetButtonDown ("Jump") && this.isGrounded) {
+			this.rigidBody.velocity = new Vector2 (this.rigidBody.velocity.x * this.jumpBoost, jumpForce);
+		}
+	}
+
+	private void Flip (float horizontalInput)
 	{
 		var localScale = this.transform.localScale;
 		if (previousAxis <= 0 && horizontalInput > 0) {
