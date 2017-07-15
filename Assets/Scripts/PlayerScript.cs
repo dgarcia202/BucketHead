@@ -11,10 +11,11 @@ public class PlayerScript : MonoBehaviour {
 	/// <summary>
 	/// The jump force.
 	/// </summary>
-	public float jumpForce = 10f;
+	public Vector2 jumpForce = new Vector2(0f, 10f);
 
-	public bool isGrounded = false;
-
+	/// <summary>
+	/// The player mask.
+	/// </summary>
 	public LayerMask playerMask;
 
 	private Rigidbody2D rigidBody;
@@ -24,6 +25,8 @@ public class PlayerScript : MonoBehaviour {
 	private float previousAxis = 0;
 
 	private Transform groundDetect;
+
+	private bool isGrounded = false;
 
 	/// <summary>
 	/// Start this instance.
@@ -52,7 +55,7 @@ public class PlayerScript : MonoBehaviour {
 
 		var velocity = this.rigidBody.velocity;
 		if (Input.GetButtonDown ("Jump") && velocity.y == 0) {
-			velocity.y = jumpForce;
+			velocity += jumpForce;
 			this.rigidBody.velocity = velocity;
 		}
 
